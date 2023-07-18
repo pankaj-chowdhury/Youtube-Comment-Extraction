@@ -27,3 +27,42 @@ To obtain a YouTube API key, you need to create a project in the Google Cloud Co
 Now you have your YouTube API key, which you can use in your code to access the YouTube Data API.
 
 Note: Make sure to keep your API key secure and avoid sharing it publicly, as it grants access to your quota and could potentially be misused by others.
+
+# Youtube-Comment-Extraction - Python Code
+
+from googleapiclient.discovery import build
+import os
+
+# Set up the API client
+api_key = "XXXXXXXXXX"  # Replace with your YouTube Data API key
+youtube = build('youtube', 'v3', developerKey=api_key)
+
+def search_videos(query):
+    videos = []
+
+    # Construct the API request
+    request = youtube.search().list(
+        part='snippet',
+        q=query,
+        type='video',
+        maxResults=20
+    )
+
+    # Execute the API request
+    response = request.execute()
+
+    # Extract video information from the response
+    for item in response['items']:
+        video_title = item['snippet']['title']
+        video_id = item['id']['videoId']
+        videos.append((video_title, video_id))
+
+    return videos
+
+# Example usage (Searching for "domestic violence" related youtube vid)
+query = "domestic violence"
+videos = search_videos(query)
+
+# Print the list of videos
+for video_title, video_id in videos:
+    print(f"{video_title}: https://www.youtube.com/watch?v={video_id}")
